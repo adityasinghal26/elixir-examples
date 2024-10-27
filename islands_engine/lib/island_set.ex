@@ -34,7 +34,7 @@ defmodule IslandsEngine.IslandSet do
   end
 
   # Check if the island is forested
-  def forested?(island_set, :none) do
+  def forested?(_island_set, :none) do
     false
   end
 
@@ -42,6 +42,12 @@ defmodule IslandsEngine.IslandSet do
     island_set
     |> Agent.get(fn state -> Map.get(state, island_key) end)
     |> Island.forested?
+  end
+
+  # Check if all the islands are forested
+  def all_forested?(island_set) do
+    islands = Agent.get(island_set, &(&1))
+    Enum.all?(keys(), fn key -> Island.forested?(Map.get(islands, key)) end)
   end
 
   # Since Maps.keys will return a list of atoms, along with :__struct__ atom

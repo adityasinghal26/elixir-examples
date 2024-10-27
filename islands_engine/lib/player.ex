@@ -67,6 +67,12 @@ defmodule IslandsEngine.Player do
     end
   end
 
+  def win?(opponent) do
+    opponent
+    |> Player.get_island_set
+    |> IslandSet.all_forested?
+  end
+
   def to_string(player) do
     "%Player{" <> string_body(player) <> "}"
   end

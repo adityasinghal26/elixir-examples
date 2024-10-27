@@ -74,8 +74,9 @@ defmodule IslandsEngine.Game do
   def handle_call({:guess, player, coordinate}, _from, state) do
     opponent = opponent(state, player)
     opponent_board = Player.get_board(opponent)
-    response = Player.guess_coordinate(opponent_board, coordinate)
+    Player.guess_coordinate(opponent_board, coordinate)
     |> forest_check(opponent, coordinate)
+    |> win_check(opponent, state)
   end
 
   # Get the opponent player
@@ -96,6 +97,23 @@ defmodule IslandsEngine.Game do
     {:hit, island_key}
     # return island_key if it's forested
     # else, it returns :none
+  end
+
+  # If the guess is hit or miss, but the island is not forested
+  # it will return :no_win
+  defp win_check({hit_or_miss, :none}, _opponent, state) do
+    {:reply, {hit_or_miss, :none, :no_win}, state}
+  end
+
+  # If the guess is hit and forests the island_key
+  # Check if the player has won
+  defp win_check({:hit, island_key}, opponent, state) do
+    win_status =
+    case Player.win?(opponent) do
+      true -> :win
+      false -> :no_win
+    end
+    {:reply, {:hit, island_key, win_status}, state}
   end
 
 end
