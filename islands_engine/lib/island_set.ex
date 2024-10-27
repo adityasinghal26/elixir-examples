@@ -33,6 +33,17 @@ defmodule IslandsEngine.IslandSet do
     Coordinate.set_all_in_island(new_coordinates, island_key)
   end
 
+  # Check if the island is forested
+  def forested?(island_set, :none) do
+    false
+  end
+
+  def forested?(island_set, island_key) do
+    island_set
+    |> Agent.get(fn state -> Map.get(state, island_key) end)
+    |> Island.forested?
+  end
+
   # Since Maps.keys will return a list of atoms, along with :__struct__ atom
   # we need to filter out the :__struct__ atom
   defp keys() do

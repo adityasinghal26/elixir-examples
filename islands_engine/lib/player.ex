@@ -55,6 +55,18 @@ defmodule IslandsEngine.Player do
     end
   end
 
+  def forested_island(opponent, coordinate) do
+    board = Player.get_board(opponent)
+    island_key = Board.coordinate_island(board, coordinate)
+    island_set = Player.get_island_set(opponent)
+
+    # if coordinate doesn't belong to any island, island_key will be :none
+    case IslandSet.forested?(island_set, island_key) do
+      true -> island_key
+      false -> :none
+    end
+  end
+
   def to_string(player) do
     "%Player{" <> string_body(player) <> "}"
   end
