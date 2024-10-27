@@ -22,6 +22,29 @@ defmodule IslandsEngine.Player do
     Agent.get(player, fn state -> state.island_set end)
   end
 
+  def set_island_coordinates(player, island, coordinates) do
+    board = Player.get_board(player)
+    island_set = Player.get_island_set(player)
+    new_coordinates = convert_coordinates(board, coordinates)
+    IslandSet.set_island_coordinates(island_set, island, new_coordinates)
+  end
+
+  # Convert the coordinate list to coordinate agents
+  defp convert_coordinates(board, coordinates) do
+    Enum.map(coordinates, fn coord -> convert_coordinate(board, coord) end)
+  end
+
+
+  # Get the coordinate agent for individual coordinate
+  # If in case, the coordinate is already an agent (pid), return the agent
+  defp convert_coordinate(board, coordinate) when is_atom coordinate do
+    Board.get_coordinate(board, coordinate)
+  end
+
+  defp convert_coordinate(_board, coordinate) when is_pid coordinate do
+    coordinate
+  end
+
   def to_string(player) do
     "%Player{" <> string_body(player) <> "}"
   end

@@ -32,6 +32,18 @@ defmodule IslandsEngine.Coordinate do
       Agent.update(coordinate, fn state -> Map.put(state, :guessed?, true) end)
   end
 
+  # Islands can be set multiple times
+  # Throw FunctionClauseError if the island is not an atom
+  def set_in_island(coordinate, island) when is_atom island do
+      Agent.update(coordinate, fn state -> Map.put(state, :in_island, island) end)
+  end
+
+  # Set the island for multiple coordinates
+  def set_all_in_island(coordinates, island)
+      when is_atom(island) and is_list(coordinates) do
+          Enum.each(coordinates, fn coord -> set_in_island(coord, island) end)
+  end
+
   # Show the entire state of the coordinate
   def to_string(coordinate) do
       # "#{inspect island(coordinate)}#{inspect guessed?(coordinate)}"

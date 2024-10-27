@@ -33,6 +33,11 @@ defmodule IslandsEngine.Game do
     GenServer.call(game, {:add_player, name})
   end
 
+  def set_island_coordinates(game, player, island, cooordinates)
+    when is_atom(player) and is_atom(island) do
+      GenServer.call(game, {:set_island_coordinates, player, island, cooordinates})
+  end
+
   ## ---- Callback functions ---- ##
   # Not needed for this exercise
   # def handle_info(:first, state) do
@@ -46,6 +51,13 @@ defmodule IslandsEngine.Game do
 
   def handle_call({:add_player, name}, _from, state) do
     Player.set_name(state.player2, name)
+    {:reply, :ok, state}
+  end
+
+  def handle_call({:set_island_coordinates, player, island, coordinates}, _from, state) do
+    state
+    |> Map.get(player)
+    |> Player.set_island_coordinates(island, coordinates)
     {:reply, :ok, state}
   end
 
