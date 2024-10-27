@@ -34,7 +34,6 @@ defmodule IslandsEngine.Player do
     Enum.map(coordinates, fn coord -> convert_coordinate(board, coord) end)
   end
 
-
   # Get the coordinate agent for individual coordinate
   # If in case, the coordinate is already an agent (pid), return the agent
   defp convert_coordinate(board, coordinate) when is_atom coordinate do
@@ -43,6 +42,17 @@ defmodule IslandsEngine.Player do
 
   defp convert_coordinate(_board, coordinate) when is_pid coordinate do
     coordinate
+  end
+
+  # Guess the coordinate on the opponent board
+  # If the coordinate is a hit, return :hit
+  # If the coordinate is a miss, return :miss
+  def guess_coordinate(opponent_board, coordinate) do
+    Board.guess_coordinate(opponent_board, coordinate)
+    case Board.coordinate_hit(opponent_board, coordinate) do
+      true -> :hit
+      false -> :miss
+    end
   end
 
   def to_string(player) do
