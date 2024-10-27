@@ -50,6 +50,11 @@ defmodule IslandsEngine.Game do
   #   {:noreply, state}
   # end
 
+  # Not needed for this exercise
+  # def handle_cast(:demo, state) do
+  #   {:noreply, %{state | test: "new value"}}
+  # end
+
   def handle_call(:demo, _from, state) do
     {:reply, state, state}
   end
@@ -72,11 +77,6 @@ defmodule IslandsEngine.Game do
     response = Player.guess_coordinate(opponent_board, coordinate)
     {:reply, response, state}
   end
-
-  # Not needed for this exercise
-  # def handle_cast(:demo, state) do
-  #   {:noreply, %{state | test: "new value"}}
-  # end
 
   # Get the opponent player
   defp opponent(state, :player1) do
