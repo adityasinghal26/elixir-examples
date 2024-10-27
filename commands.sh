@@ -94,3 +94,17 @@ iex> {:ok, game} = GenServer.start_link(IslandsEngine.Game, %{test: "test value"
 {:ok, #PID<0.143.0>}
 iex> GenServer.call(game, :demo)
 %{test: "test value"}
+
+# Local Name the GenServer
+iex> GenServer.start_link(Game, {:ok, "Frank"}, name: :islands_game)
+{:ok, #PID<0.130.0>}
+iex> Game.call_demo(:islands_game)
+%IslandsEngine.Game{player1: #PID<0.238.0>, player2: #PID<0.346.0>}
+iex> GenServer.start_link(Game, {:ok, "Frank"}, name: :islands_game)
+{:error, {:already_started, #PID<0.130.0>}}
+
+# Global Name the GenServer
+iex> GenServer.start_link(Game, {:ok, "Frank"}, name: {:global, "game:Frank"})
+{:ok, #PID<0.347.0>}
+iex> Game.call_demo({:global, "game:Frank"})
+%IslandsEngine.Game{player1: #PID<0.455.0>, player2: #PID<0.563.0>}

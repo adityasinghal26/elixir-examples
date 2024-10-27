@@ -5,20 +5,13 @@ defmodule IslandsEngine.Game do
 
   defstruct player1: :none, player2: :none
 
+  ## ---- Client functions ---- ##
   # start_link/3 to spawn the new process
   # triggers the init/1 callback function
-  def start_link(name) when not is_nil(name) do
-    GenServer.start_link(__MODULE__, name)
+  def start_link(name) when is_binary(name) and byte_size(name) > 0 do
+    GenServer.start_link(__MODULE__, name, name: {:global, "game:#{name}"})
   end
 
-  # init/1 to initialize the process
-  def init(name) do
-    {:ok, player1} = Player.start_link(name)
-    {:ok, player2} = Player.start_link()
-    {:ok, %Game{player1: player1, player2: player2}}
-  end
-
-  ## ---- Client functions ---- ##
   def call_demo(game) do
     GenServer.call(game, :demo)
   end
@@ -43,7 +36,18 @@ defmodule IslandsEngine.Game do
       GenServer.call(game, {:guess, player, coordinate})
   end
 
-  ## ---- Callback functions ---- ##
+  def stop(game) do
+    GenServer.cast(game, :stop)
+  end
+
+  ## ---- GenServer functions ---- ##
+  # init/1 to initialize the process
+  def init(name) do
+    {:ok, player1} = Player.start_link(name)
+    {:ok, player2} = Player.start_link()
+    {:ok, %Game{player1: player1, player2: player2}}
+  end
+
   # Not needed for this exercise
   # def handle_info(:first, state) do
   #   IO.puts "This message has been handled by handle_info/2, matching on :first."
@@ -79,6 +83,11 @@ defmodule IslandsEngine.Game do
     |> win_check(opponent, state)
   end
 
+  def handle_cast(:stop, state) do
+    {:stop, :normal, state}
+  end
+
+  ## ---- Private functions ---- ##
   # Get the opponent player
   defp opponent(state, :player1) do
     state.player2
