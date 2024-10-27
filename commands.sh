@@ -83,3 +83,14 @@ iex> island_set_state = Agent.get(island_set, &(&1))
   square: #PID<0.200.0>
 }
 iex> Agent.get(island_set_state.atoll, &(&1))
+
+## ----------------- Working with GenServer ----------------- ##
+# Start a new GenServer
+iex> {:ok, pid} = GenServer.start_link(IslandsEngine.Game, %{})
+{:ok, #PID<0.440.0>}
+
+# Call the GenServer
+iex> {:ok, game} = GenServer.start_link(IslandsEngine.Game, %{test: "test value"})
+{:ok, #PID<0.143.0>}
+iex> GenServer.call(game, :demo)
+%{test: "test value"}
