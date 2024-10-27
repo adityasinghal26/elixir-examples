@@ -70,3 +70,16 @@ iex> Map.from_struct(%Coordinate{})
 %{in_island: :none, guessed?: false}
 iex> Map.keys(%Coordinate{})
 [:__struct__, :in_island, :guessed?]
+
+# Use of &(&1)
+iex> {:ok, island_set} = IslandSet.start_link
+{:ok, #PID<0.198.0>}
+iex> island_set_state = Agent.get(island_set, &(&1))
+%IslandsEngine.IslandSet{
+  atoll: #PID<0.201.0>,
+  dot: #PID<0.199.0>,
+  l_shape: #PID<0.202.0>,
+  s_shape: #PID<0.203.0>,
+  square: #PID<0.200.0>
+}
+iex> Agent.get(island_set_state.atoll, &(&1))
